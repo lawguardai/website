@@ -1,0 +1,120 @@
+openapi: 3.0.0
+info:
+  title: Lawguard AI API
+  version: 1.0.0
+  description: API for managing compliance and regulatory requirements
+
+servers:
+  - url: http://localhost:3000/api
+    description: Development server
+
+paths:
+  /regulations:
+    get:
+      summary: Get all active regulations
+      responses:
+        '200':
+          description: List of regulations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Regulation'
+  
+  /regulations/{id}:
+    get:
+      summary: Get regulation by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Regulation details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Regulation'
+  
+  /compliance/check:
+    post:
+      summary: Check compliance for a business profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BusinessProfile'
+      responses:
+        '200':
+          description: Compliance check results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComplianceCheck'
+
+components:
+  schemas:
+    Regulation:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        effectiveDate:
+          type: string
+          format: date
+        status:
+          type: string
+          enum: [active, pending, archived]
+    
+    BusinessProfile:
+      type: object
+      properties:
+        locations:
+          type: array
+          items:
+            type: string
+        customerBase:
+          type: array
+          items:
+            type: string
+        transactionTypes:
+          type: array
+          items:
+            type: string
+        dataHandling:
+          type: array
+          items:
+            type: string
+    
+    ComplianceCheck:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [compliant, attention, critical]
+        requirements:
+          type: array
+          items:
+            $ref: '#/components/schemas/ComplianceRequirement'
+    
+    ComplianceRequirement:
+      type: object
+      properties:
+        id:
+          type: string
+        description:
+          type: string
+        priority:
+          type: string
+          enum: [low, medium, high, critical]
+        deadline:
+          type: string
+          format: date
